@@ -78,6 +78,7 @@ pipeline {
             echo "test4"
             echo "test5"
             echo "test 6"
+            echo "test 7"
         }
     }
 }

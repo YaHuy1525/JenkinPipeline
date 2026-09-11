@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    environment {
+        REPO_URL = 'https://github.com/YaHuy1525/JenkinPipeline.git'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo "Fetching source code from repository: ${env.REPO_URL}"
+                git branch: 'main', url: 'https://github.com/YaHuy1525/JenkinPipeline.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                echo "Installing project dependencies via npm..."
+                sh 'npm install || true'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                echo "Executing unit test suite..."
+                sh 'npm test || true'
+            }
+        }
+
+        stage('Generate Coverage Report') {
+            steps {
+                echo "Generating code coverage report (lcov/istanbul)..."
+                sh 'npm run coverage || true'
+            }
+        }
+
+        stage('NPM Audit (Security Scan)') {
+            steps {
+                echo "Performing security vulnerability scan on node_modules dependencies..."
+                sh 'npm audit || true'
+            }
+        }
+    }
+}

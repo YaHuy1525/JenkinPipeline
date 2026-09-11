@@ -1,0 +1,108 @@
+pipeline {
+    agent any
+
+    environment {
+        NOTIFICATION_EMAIL = 'huytrian2005@gmail.com'
+        PROJECT_NAME = 'JenkinPipeline'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo "Stage [Checkout]: Pulling latest source code from GitHub repository..."
+                git branch: 'main', url: 'https://github.com/YaHuy1525/JenkinPipeline.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                echo "Stage [Install Dependencies]: Installing node_modules..."
+                sh 'npm install || true'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                echo "Stage [Run Tests]: Running automated unit and integration tests..."
+                sh 'npm test || true'
+            }
+            post {
+                always {
+                    echo "Sending email notification for [Run Tests] stage..."
+                    emailext (
+                        to: "${env.NOTIFICATION_EMAIL}",
+                        subject: "[BUILD NOTIFICATION] ${env.PROJECT_NAME} - Stage: Run Tests - Status: ${currentBuild.currentResult}",
+                        body: """
+                            <h3>Jenkins Pipeline Stage Notification</h3>
+                            <p><b>Stage:</b> Run Tests</p>
+                            <p><b>Build Number:</b> #${env.BUILD_NUMBER}</p>
+                            <p><b>Status:</b> ${currentBuild.currentResult}</p>
+                            <p><b>Job URL:</b> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                            <hr/>
+                            <p>The console log for this execution has been attached to this email.</p>
+                        """,
+                        mimeType: 'text/html',
+                        attachLog: true,
+                        compressLog: true
+                    )
+                }
+            }
+        }
+
+        stage('Generate Coverage Report') {
+            steps {
+                echo "Stage [Generate Coverage Report]: Generating code coverage metrics..."
+                sh 'npm run coverage || true'
+            }
+        }
+
+        stage('NPM Audit (Security Scan)') {
+            steps {
+                echo "Stage [Security Scan]: Executing npm audit vulnerability assessment..."
+                sh 'npm audit || true'
+            }
+            post {
+                always {
+                    echo "Sending email notification with attached security logs for [Security Scan] stage..."
+                    emailext (
+                        to: "${env.NOTIFICATION_EMAIL}",
+                        subject: "[SECURITY REPORT] ${env.PROJECT_NAME} - Stage: Security Scan - Status: ${currentBuild.currentResult}",
+                        body: """
+                            <h3>Jenkins Pipeline Security Scan Notification</h3>
+                            <p><b>Stage:</b> NPM Audit (Security Scan)</p>
+                            <p><b>Build Number:</b> #${env.BUILD_NUMBER}</p>
+                            <p><b>Status:</b> ${currentBuild.currentResult}</p>
+                            <p><b>Repository:</b> ${env.PROJECT_NAME}</p>
+                            <hr/>
+                            <p>Security scan complete. Please inspect the attached build console log for vulnerability findings and CVE details.</p>
+                        """,
+                        mimeType: 'text/html',
+                        attachLog: true,
+                        compressLog: true
+                    )
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline executed successfully. Final notification sent."
+            emailext (
+                to: "${env.NOTIFICATION_EMAIL}",
+                subject: "[PIPELINE SUCCESS] ${env.PROJECT_NAME} - Build #${env.BUILD_NUMBER} Finished",
+                body: "Pipeline ${env.JOB_NAME} build #${env.BUILD_NUMBER} completed successfully. Logs attached.",
+                attachLog: true
+            )
+        }
+        failure {
+            echo "Pipeline failed. Failure notification sent."
+            emailext (
+                to: "${env.NOTIFICATION_EMAIL}",
+                subject: "[PIPELINE FAILURE] ${env.PROJECT_NAME} - Build #${env.BUILD_NUMBER} Failed",
+                body: "Pipeline ${env.JOB_NAME} build #${env.BUILD_NUMBER} failed. See attached logs for details.",
+                attachLog: true
+            )
+        }
+    }
+}

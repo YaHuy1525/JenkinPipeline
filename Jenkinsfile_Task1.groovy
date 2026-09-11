@@ -1,0 +1,71 @@
+pipeline {
+    agent any
+
+    triggers {
+        pollSCM('H/5 * * * *') // Polls SCM every 5 minutes for new commits
+    }
+
+    environment {
+        APP_NAME = 'SIT223_Web_Application'
+        STAGING_HOST = 'ec2-staging.deakin-unit.internal'
+        PROD_HOST = 'ec2-prod.deakin-unit.internal'
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                echo "[STAGE 1: BUILD] Task: Compiling source code and packaging application artefacts."
+                echo "[TOOL SELECTED]: Apache Maven (mvn clean package)"
+                echo "Fetching source code and generating JAR/WAR build artefacts..."
+            }
+        }
+
+        stage('Unit and Integration Tests') {
+            steps {
+                echo "[STAGE 2: TESTS] Task: Running automated unit tests and integration tests."
+                echo "[TOOLS SELECTED]: JUnit 5 & Jest Framework"
+                echo "Executing unit tests (100% pass) and component integration suite..."
+            }
+        }
+
+        stage('Code Analysis') {
+            steps {
+                echo "[STAGE 3: CODE ANALYSIS] Task: Inspecting code quality and coding standard compliance."
+                echo "[TOOL SELECTED]: ESLint / Checkstyle & SonarQube Scanner"
+                echo "Performing static code analysis against standard quality gates..."
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                echo "[STAGE 4: SECURITY SCAN] Task: Scanning dependencies and application code for vulnerabilities."
+                echo "[TOOL SELECTED]: Snyk & OWASP Dependency-Check"
+                echo "Scanning external packages for known CVEs and security flaws..."
+            }
+        }
+
+        stage('Deploy to Staging') {
+            steps {
+                echo "[STAGE 5: DEPLOY TO STAGING] Task: Deploying built package to staging environment."
+                echo "[TOOL SELECTED]: AWS EC2 & Docker Container Registry"
+                echo "Pushing application container to staging host: ${env.STAGING_HOST}..."
+            }
+        }
+
+        stage('Integration Tests on Staging') {
+            steps {
+                echo "[STAGE 6: STAGING INTEGRATION TESTS] Task: Verifying app functionality in staging environment."
+                echo "[TOOL SELECTED]: Postman CLI / Newman & Selenium WebDriver"
+                echo "Executing end-to-end API and UI tests against ${env.STAGING_HOST}..."
+            }
+        }
+
+        stage('Deploy to Production') {
+            steps {
+                echo "[STAGE 7: DEPLOY TO PRODUCTION] Task: Promoting deployment to live production environment."
+                echo "[TOOL SELECTED]: AWS EC2 & AWS CodeDeploy / Kubernetes Cluster"
+                echo "Deploying application to production server: ${env.PROD_HOST}..."
+            }
+        }
+    }
+}

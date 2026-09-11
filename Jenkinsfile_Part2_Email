@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    triggers {
+        pollSCM('H/5 * * * *')
+    }
+
     environment {
         NOTIFICATION_EMAIL = 'huytrian2005@gmail.com'
         PROJECT_NAME = '8.2CDevSecOp'

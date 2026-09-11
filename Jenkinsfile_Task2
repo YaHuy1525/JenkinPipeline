@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    triggers {
+        pollSCM('H/5 * * * *')
+    }
+
     environment {
         REPO_URL = 'https://github.com/YaHuy1525/8.2CDevSecOp.git'
     }

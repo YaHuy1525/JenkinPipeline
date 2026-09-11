@@ -68,5 +68,9 @@ pipeline {
             }
         }
     }
-    echo "Build successful!"
+    post {
+        always {
+            echo "Build successful!"
+        }
+    }
 }

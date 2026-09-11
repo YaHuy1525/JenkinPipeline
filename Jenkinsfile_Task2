@@ -2,14 +2,14 @@ pipeline {
     agent any
 
     environment {
-        REPO_URL = 'https://github.com/YaHuy1525/JenkinPipeline.git'
+        REPO_URL = 'https://github.com/YaHuy1525/8.2CDevSecOp.git'
     }
 
     stages {
         stage('Checkout') {
             steps {
                 echo "Fetching source code from repository: ${env.REPO_URL}"
-                git branch: 'main', url: 'https://github.com/YaHuy1525/JenkinPipeline.git'
+                git branch: 'main', url: 'https://github.com/YaHuy1525/8.2CDevSecOp.git'
             }
         }
 

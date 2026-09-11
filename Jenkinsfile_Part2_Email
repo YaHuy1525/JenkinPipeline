@@ -3,14 +3,14 @@ pipeline {
 
     environment {
         NOTIFICATION_EMAIL = 'huytrian2005@gmail.com'
-        PROJECT_NAME = 'JenkinPipeline'
+        PROJECT_NAME = '8.2CDevSecOp'
     }
 
     stages {
         stage('Checkout') {
             steps {
                 echo "Stage [Checkout]: Pulling latest source code from GitHub repository..."
-                git branch: 'main', url: 'https://github.com/YaHuy1525/JenkinPipeline.git'
+                git branch: 'main', url: 'https://github.com/YaHuy1525/8.2CDevSecOp.git'
             }
         }
 

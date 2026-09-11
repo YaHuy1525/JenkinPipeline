@@ -91,7 +91,7 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline executed successfully. Final notification sent. test"
+            echo "Pipeline executed successfully. Final notification sent. testtttttt"
             emailext (
                 to: "${env.NOTIFICATION_EMAIL}",
                 subject: "[PIPELINE SUCCESS] ${env.PROJECT_NAME} - Build #${env.BUILD_NUMBER} Finished",

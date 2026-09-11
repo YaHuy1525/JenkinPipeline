@@ -14,7 +14,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo "Stage [Checkout]: Pulling latest source code from GitHub repository..."
-                git branch: 'main', url: 'https://github.com/YaHuy1525/JenkinPipeline'
+                git branch: 'main', url: 'https://github.com/YaHuy1525/8.2CDevSecOp'
             }
         }
 

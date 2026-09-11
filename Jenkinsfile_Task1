@@ -73,6 +73,7 @@ pipeline {
             echo "Build successful!"
             echo "Pipeline completed successfully."
             echo "test"
+            echo "test2"
         }
     }
 }
